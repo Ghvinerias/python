@@ -25,12 +25,6 @@ jobs:
           fi
           cp "$SOURCE_FILE" "baseimage/requirements.txt"
 
-      - name: Build Docker Image
-        run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:$VERSION_TAG ./baseimage/
-
-      - name: Publish Docker Image to GitHub Container Registry
-        run: docker push ghvinerias/python:$VERSION_TAG
-
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.DOCKERUHUB_SECRET }} | docker login -u ghvinerias --password-stdin
 
@@ -39,12 +33,9 @@ jobs:
 
       - name: Publish Docker Image to GitHub Container Registry
         run: docker push ghvinerias/python:$VERSION_TAG
-      
-      - name: Build Docker image
-        run: docker build -t my-python-app .
 
       - name: Create Docker container
-        run: docker create --name my-python-app-container my-python-app
+        run: docker create --name my-python-app-container ghvinerias/python:$VERSION_TAG
 
       - name: Copy installed_packages.txt from Docker container
         run: docker cp my-python-app-container:/app/installed_packages.txt .
