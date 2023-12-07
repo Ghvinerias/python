@@ -10,7 +10,7 @@ RUN apt-get update \
  && apt-get install --no-install-recommends -y \
       vim \
       curl \
-      ca-certificates \
+      ca-certificates
 # Install the dependencies from requirements.txt
 RUN pip install -r requirements.txt
 
