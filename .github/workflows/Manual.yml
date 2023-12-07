@@ -1,0 +1,32 @@
+name: Manual Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION_TAG:
+        description: 'Version tag for the Docker image'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Copy requirements file
+        run: |
+          SOURCE_FILE="reqs/${{ github.event.inputs.VERSION_TAG }}.txt"
+          if [[ ! -f "$SOURCE_FILE" ]]; then
+            echo "No matching requirements file found for ${{ github.event.inputs.VERSION_TAG }}"
+            exit 1
+          fi
+
+          cp "$SOURCE_FILE" "baseimage/requirements.txt"
+
+      - name: Build Docker Image
+        run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:${{ github.event.inputs.VERSION_TAG }} ./baseimage/
+
+      - name: Publish Docker Image to GitHub Container Registry
+        run: docker push ghvinerias/python:${{ github.event.inputs.VERSION_TAG }}

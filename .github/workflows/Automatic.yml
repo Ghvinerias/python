@@ -1,0 +1,41 @@
+name: Automatic Workflow
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get Version Tag
+        run: |
+          VERSION_TAG=$(echo ${{ github.event.head_commit.message }})
+          echo "VERSION_TAG=${VERSION_TAG}" >> $GITHUB_ENV 
+
+      - name: Copy requirements file
+        run: |
+          SOURCE_FILE="reqs/${VERSION_TAG}.txt"
+          if [[ ! -f "$SOURCE_FILE" ]]; then
+            echo "No matching requirements file found for $VERSION_TAG"
+            exit 1
+          fi
+          cp "$SOURCE_FILE" "baseimage/requirements.txt"
+
+      - name: Build Docker Image
+        run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:$VERSION_TAG ./baseimage/
+
+      - name: Publish Docker Image to GitHub Container Registry
+        run: docker push ghvinerias/python:$VERSION_TAG
+
+  - name: Login to GitHub Container Registry
+    run: echo ${{ secrets.DOCKERUHUB_SECRET }} | docker login -u ghvinerias --password-stdin
+
+  - name: Build Docker Image
+    run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:$VERSION_TAG ./baseimage/
+
+  - name: Publish Docker Image to GitHub Container Registry
+    run: docker push ghvinerias/python:$VERSION_TAG
