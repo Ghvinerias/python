@@ -31,11 +31,11 @@ jobs:
       - name: Publish Docker Image to GitHub Container Registry
         run: docker push ghvinerias/python:$VERSION_TAG
 
-  - name: Login to GitHub Container Registry
-    run: echo ${{ secrets.DOCKERUHUB_SECRET }} | docker login -u ghvinerias --password-stdin
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.DOCKERUHUB_SECRET }} | docker login -u ghvinerias --password-stdin
 
-  - name: Build Docker Image
-    run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:$VERSION_TAG ./baseimage/
+      - name: Build Docker Image
+        run: docker build -f ./baseimage/Dockerfile -t ghvinerias/python:$VERSION_TAG ./baseimage/
 
-  - name: Publish Docker Image to GitHub Container Registry
-    run: docker push ghvinerias/python:$VERSION_TAG
+      - name: Publish Docker Image to GitHub Container Registry
+        run: docker push ghvinerias/python:$VERSION_TAG
