@@ -6,7 +6,11 @@ WORKDIR /app
 
 # Copy the requirements.txt file into the container
 COPY requirements.txt .
-
+RUN apt-get update \
+ && apt-get install --no-install-recommends -y \
+      vim \
+      curl \
+      ca-certificates \
 # Install the dependencies from requirements.txt
 RUN pip install -r requirements.txt
 
