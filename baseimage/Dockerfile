@@ -11,7 +11,7 @@ RUN apt-get update \
       vim \
       curl \
       ca-certificates \
-      gcc
+      python3-dev
 # Install the dependencies from requirements.txt
 RUN pip install -r requirements.txt
 
