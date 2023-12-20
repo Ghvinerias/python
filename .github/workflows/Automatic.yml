@@ -24,6 +24,9 @@ jobs:
             exit 1
           fi
           cp "$SOURCE_FILE" "baseimage/requirements.txt"
+          if [[ "$SOURCE_FILE" == "dev" ]]; then
+            apt-get install gcc
+          fi
 
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.DOCKERUHUB_SECRET }} | docker login -u ghvinerias --password-stdin
